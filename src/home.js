@@ -1,3 +1,7 @@
 //import 'bootstrap';
 
-import 'bootstrap/scss/bootstrap.scss';
+
+import 'jquery';
+import 'tether';
+import 'bootstrap';
+import './main.scss';
