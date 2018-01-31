@@ -15,6 +15,9 @@ module.exports = {
 	entry: {
 		app: './src',
 	},
+	devServer:{
+		 contentBase: './dist'
+	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'bundle.js',
@@ -55,42 +58,56 @@ module.exports = {
 				]
 			},
 			{
-				test:/\.(jpg|png|jpeg)$/,
+				test:/.html$/,
+				use:[
+					{
+						loader: 'html-loader',
+						options: {
+			        minimize: true,
+			        name: '[name].[ext]',
+			      }
+					}
+				]	
+			},
+			{
+				test: /\.(png|jp(e*)g|svg)$/,
 				use:[
 					{
 						loader: 'file-loader',
 						options:{
+							limit: 8000,
 							name: '[name].[ext]',
-							outputPath: 'img/',
-							publicPath: '/'
+							outputPath: 'img/'
 						}
 					}
 				],
 			},
 			{
-				test: /\.(eot|ttf|woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-				use: {
-					loader: "file-loader",
-					options:{
-						name: '[name].[ext]'
-					}
-				}
-			}
+       test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+       use: [{
+         loader: 'file-loader',
+         options: {
+           name: '[name].[ext]',
+           outputPath: 'fonts/',    // where the fonts will go
+           publicPath: '../'       // override the default path
+         }
+       }]
+      },
 		]
 	},
 	plugins:[
+		new CleanWebpackPlugin(['dist']),
 		new webpack.ProvidePlugin({
 			$:'jquery',
 			jQuery:'jquery',
 		}),
 		extractSass,
-		new PurifyCSSPlugin({
-			paths: glob.sync(path.resolve(__dirname,'src/*'))
-		}),
+		// new PurifyCSSPlugin({
+		// 	paths: glob.sync(path.resolve(__dirname,'src/*'))
+		// }),
 		new HtmlWebpackPlugin({
 			filename: 'index.html',
 			template: 'src/index.html',
-		}),
-		new CleanWebpackPlugin(['dist'])
+		})
 	]
 };
